@@ -14,11 +14,12 @@ image by using a Dockerfile like this:
 ## Setup
 Start a container like this on two hosts:
 
-    $ docker run -e DEV=eth1 --privileged --net host fish/haproxy-docker 10.0.1.201 foobar23 [additional IPs..]
+    $ docker run --cap-add=NET_ADMIN --net host fish/haproxy-docker 10.0.1.201 foobar23 wlan0
 
 Now you should have two haproxy running and ucarp running on
-the given interface, making sure only one listens on 10.0.1.201
-(and optionally on additional IPs).
+the given interface, making sure only one listens on 10.0.1.201.
+
+You can set the IPS env var to bind additional IPs on the active system.
 
 ## Caveats
 If you're using IP based vhosts, you need to set
