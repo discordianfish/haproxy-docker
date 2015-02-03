@@ -1,5 +1,17 @@
 #!/bin/bash
 set -e
+PIDFILE="/tmp/haproxy.pid"
+
+reload() {
+  echo "Reloading config"
+  if ! haproxy -c -f /haproxy/haproxy.cfg
+  then
+    echo "invalid config, not reloading"
+    return 1
+  fi
+
+  haproxy -p $PIDFILE -f /haproxy/haproxy.cfg -sf $(cat $PIDFILE)
+}
 
 # Generate keys if not provided
 [ -f keys/dhparam.pem ] ||
@@ -16,5 +28,11 @@ fi
 # Check is haproxy.cfg is valid before we start ucarp
 haproxy -c -f /haproxy/haproxy.cfg
 
-/usr/sbin/haproxy -f /haproxy/haproxy.cfg
-sleep infinity # block forever
+/usr/sbin/haproxy -p $PIDFILE -f /haproxy/haproxy.cfg
+
+trap reload SIGHUP
+while true
+do
+  sleep infinity & # blocks forever but still make sure bash
+  wait || :        # executes reload trap. See:
+done               # http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_12_02.html#sect_12_02_02

@@ -11,6 +11,10 @@ image by using a Dockerfile like this:
     FROM fish/haproxy-docker
     ADD  haproxy.cfg /haproxy/haproxy.cfg
 
+If you need graceful reloads and can't affort rebuilding and restarting
+haproxy completely, you can bind-mount a config from your host and use
+`docker kill -s HUP ...` to reload the config.
+
 ## Setup
 Start a container like this on two hosts:
 
