@@ -13,6 +13,8 @@ reload() {
   haproxy -p $PIDFILE -f /haproxy/haproxy.cfg -sf $(cat $PIDFILE)
 }
 
+[ ! -d keys/ ] && mkdir keys
+
 # Generate keys if not provided
 [ -f keys/dhparam.pem ] ||
   openssl dhparam -out keys/dhparam.pem 2048
